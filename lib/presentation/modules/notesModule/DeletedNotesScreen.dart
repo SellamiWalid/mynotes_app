@@ -27,7 +27,7 @@ class DeletedNotesScreen extends StatelessWidget {
 
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
+                backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
                 content: const Text('Note Restored',
                   style: TextStyle(
                     color: Colors.white,
@@ -45,7 +45,7 @@ class DeletedNotesScreen extends StatelessWidget {
 
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
+                backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
                 content: const Text('All Notes Restored',
                   style: TextStyle(
                     color: Colors.white,
@@ -63,7 +63,7 @@ class DeletedNotesScreen extends StatelessWidget {
 
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
+                backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
                 content: const Text('Note Deleted',
                   style: TextStyle(
                     color: Colors.white,
@@ -81,7 +81,7 @@ class DeletedNotesScreen extends StatelessWidget {
 
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
+                backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
                 content: const Text('All Notes Deleted',
                   style: TextStyle(
                     color: Colors.white,
@@ -160,7 +160,7 @@ class DeletedNotesScreen extends StatelessWidget {
                 child: Text(
                   'No notes in recycle bin',
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 19.0,
                     letterSpacing: 0.6,
                     fontWeight: FontWeight.bold,
                   ),

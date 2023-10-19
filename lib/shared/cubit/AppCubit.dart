@@ -516,6 +516,13 @@ class AppCubit extends Cubit<AppStates> {
   }
 
 
+  // void clearItem(id) {
+  //   int index = notes.indexOf(id);
+  //   notesDeleted.removeAt(index);
+  //   emit(SuccessClearAppState());
+  // }
+
+
 
   void deleteAllNotesFromDataBase({
     required Map selectNotesDel,

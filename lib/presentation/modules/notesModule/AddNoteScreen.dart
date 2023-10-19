@@ -46,14 +46,14 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   }
 
 
-  void scrollToBottom() {
-    if(scrollController.hasClients) {
-      scrollController.animateTo(
-          scrollController.position.minScrollExtent,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeIn);
-    }
-  }
+  // void scrollToBottom() {
+  //   if(scrollController.hasClients) {
+  //     scrollController.animateTo(
+  //         scrollController.position.maxScrollExtent,
+  //         duration: const Duration(milliseconds: 500),
+  //         curve: Curves.easeIn);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +67,11 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
         var cubit = AppCubit.get(context);
 
-        if(state is SuccessGetImageAppState) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            scrollToBottom();
-          });
-        }
+        // if(state is SuccessGetImageAppState) {
+        //   WidgetsBinding.instance.addPostFrameCallback((_) {
+        //     scrollToBottom();
+        //   });
+        // }
 
         if(state is SuccessAddImageNoteIntoDataBaseAppState) {
           cubit.clearImage();
@@ -169,7 +169,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                                   child: Image.file(File(cubit.image!.path),
                                     width: MediaQuery.of(context).size.width,
                                     height: MediaQuery.of(context).size.height,
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
                                       if(frame == null) {
                                         return Container(

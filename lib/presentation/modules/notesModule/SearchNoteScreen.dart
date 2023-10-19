@@ -176,7 +176,7 @@ class _SearchNoteScreenState extends State<SearchNoteScreen> {
                       child: Text(
                         'No notes ...',
                         style: TextStyle(
-                          fontSize: 18.0,
+                          fontSize: 19.0,
                           letterSpacing: 0.6,
                           fontWeight: FontWeight.bold,
                         ),
@@ -186,7 +186,7 @@ class _SearchNoteScreenState extends State<SearchNoteScreen> {
                       child: Text(
                         'No notes found ...',
                         style: TextStyle(
-                          fontSize: 18.0,
+                          fontSize: 19.0,
                           letterSpacing: 0.6,
                           fontWeight: FontWeight.bold,
                         ),

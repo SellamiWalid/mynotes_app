@@ -4,11 +4,11 @@ import 'package:hexcolor/hexcolor.dart';
 
 Color lightPrimaryColor = HexColor('096dbd');
 
-Color anotherPrimaryColor = HexColor('0c74c7');
+Color anotherPrimaryColor = HexColor('1682d9');
 
-Color darkPrimaryColor = HexColor('195285');
+Color darkPrimaryColor = HexColor('005eb2').withOpacity(.8);
 
-Color darkFloatColor = HexColor('193a47');
+// Color darkFloatColor = HexColor('005eb2').withOpacity(.8);
 
 // 1F282D
 // 005097

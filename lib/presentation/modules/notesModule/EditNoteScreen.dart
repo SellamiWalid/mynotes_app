@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:notes/shared/components/Components.dart';
 import 'package:notes/shared/components/Constants.dart';
 import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
+import 'package:notes/shared/pdf/Pdf.dart';
 import 'package:notes/shared/styles/Colors.dart';
 
 class EditNoteScreen extends StatefulWidget {
@@ -30,6 +32,30 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
   final FocusNode focusNode2 = FocusNode();
 
   GlobalKey globalKey = GlobalKey();
+
+
+  Future<File> generatePdfInBackground({
+    required String title,
+    required String content,
+    required String imagePath,
+  }) async {
+    Completer<File> completer = Completer();
+
+    // Start the PDF generation in the background
+    Future(() async {
+     await Pdf.generate(
+          title: title,
+          content: content,
+          imagePath: imagePath,
+        ).then((value) {
+       completer.complete(value);
+     }).catchError((error) {
+       completer.completeError(error);
+     });
+    });
+
+    return completer.future;
+  }
 
 
   @override
@@ -60,18 +86,6 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
         if(state is SuccessDeleteImageNoteFromDataBaseAppState) {
 
           cubit.getImageNoteFromDataBase(widget.note['id'], cubit.dataBase);
-
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //     SnackBar(
-          //       backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
-          //       content: const Text('Image deleted',
-          //         style: TextStyle(
-          //           color: Colors.white,
-          //           fontWeight: FontWeight.bold,
-          //         ),
-          //       ),
-          //       duration: const Duration(milliseconds: 700),
-          //     ));
 
         }
 
@@ -126,6 +140,29 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                     ),
                     tooltip: 'Add Image',
                   ),
+                 IconButton(
+                    onPressed: () async {
+                      focusNode1.unfocus();
+                      focusNode2.unfocus();
+                      showLoading(context, isDarkTheme);
+                      await generatePdfInBackground(
+                          title: titleController.text,
+                          content: contentController.text,
+                          imagePath: (cubit.dataImg.isNotEmpty) ? cubit.dataImg[0]['image'] : '').then((value) async {
+                           await Future.delayed(const Duration(milliseconds: 500)).then((v) async {
+                             Navigator.pop(context);
+                             await Pdf.openFile(value);
+                           });
+                      });
+
+                    },
+                    icon: Icon(
+                      Icons.picture_as_pdf_rounded,
+                      color: isDarkTheme ? anotherPrimaryColor : lightPrimaryColor,
+                      size: 30.0,
+                    ),
+                  tooltip: 'PDF',
+                ),
                 const SizedBox(
                   width: 8.0,
                 ),
@@ -174,7 +211,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                                 child: Image.file(File(cubit.dataImg[0]['image']),
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.height,
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.fitWidth,
                                   frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
                                     if(frame == null) {
                                       return Container(
@@ -220,7 +257,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                                   child: Image.file(File(cubit.image!.path),
                                     width: MediaQuery.of(context).size.width,
                                     height: MediaQuery.of(context).size.height,
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
                                       if(frame == null) {
                                         return Container(

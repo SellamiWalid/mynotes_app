@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:notes/shared/styles/Colors.dart';
 
 class LoadingIndicator extends StatelessWidget {
   final String os;
@@ -8,9 +9,13 @@ class LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
      if(os == 'android') {
-       return const CircularProgressIndicator();
+       return CircularProgressIndicator(
+         color: lightPrimaryColor,
+       );
      } else {
-       return const CupertinoActivityIndicator();
+       return CupertinoActivityIndicator(
+         color: lightPrimaryColor,
+       );
      }
   }
 }

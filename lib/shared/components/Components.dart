@@ -199,6 +199,7 @@ Widget buildItemNoteDeleted(note, selectNoteDeleted, isDarkTheme, context) => Di
   key: Key(note['id'].toString()),
   onDismissed: (!AppCubit.get(context).isSelected) ? (direction) {
     AppCubit.get(context).deleteFromDataBase(id: note['id']);
+    // AppCubit.get(context).clearItem(note['id']);
   } : null,
   child: GestureDetector(
     onTap: () {
@@ -410,6 +411,28 @@ Widget defaultTextFormField({
 );
 
 
+dynamic showLoading(context, isDarkTheme) => showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: Center(
+            child: Container(
+                padding: const EdgeInsets.all(26.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18.0),
+                  color: (isDarkTheme) ? HexColor('202020') : Colors.white,
+                ),
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: LoadingIndicator(os: getOs())),
+          ),
+        );
+      });
+
+
 void showOptions(isDarkTheme, context) {
   showModalBottomSheet(
       context: context,
@@ -486,28 +509,36 @@ dynamic showFullImage(XFile? image, String tag, context) {
               Navigator.pop(context);
             },
         ),
-        body: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Hero(
-            tag: tag,
-            child: Container(
-              decoration: const BoxDecoration(),
-              child: Image.file(File(image!.path),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                fit: BoxFit.fill,
-                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                  if(frame == null) {
-                    return SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      child: Center(child: LoadingIndicator(os: getOs())),
-                    );
-                  }
-                  return child;
-                },
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 4.0,
+            ),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Hero(
+                tag: tag,
+                child: Container(
+                  decoration: const BoxDecoration(),
+                  child: Image.file(File(image!.path),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    fit: BoxFit.fitWidth,
+                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                      if(frame == null) {
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          child: Center(child: LoadingIndicator(os: getOs())),
+                        );
+                      }
+                      return child;
+                    },
+                  ),
+                ),
               ),
             ),
           ),
@@ -518,7 +549,8 @@ dynamic showFullImage(XFile? image, String tag, context) {
 
 }
 
-dynamic showFullImageAndSave(id, GlobalKey globalKey, XFile? image, String tag, isDarkTheme, context, {bool isSaved = false}) {
+dynamic showFullImageAndSave(id, GlobalKey globalKey, XFile? image, String tag,
+    isDarkTheme, context, {bool isSaved = false}) {
 
   return navigateTo(
       context: context,
@@ -580,7 +612,7 @@ dynamic showFullImageAndSave(id, GlobalKey globalKey, XFile? image, String tag, 
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
+                              backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
                               content: const Text('Image has been saved to your gallery',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -598,30 +630,38 @@ dynamic showFullImageAndSave(id, GlobalKey globalKey, XFile? image, String tag, 
                 )
             ]
         ),
-        body: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: RepaintBoundary(
-            key: globalKey,
-            child: Hero(
-              tag: tag,
-              child: Container(
-                decoration: const BoxDecoration(),
-                child: Image.file(File(image!.path),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  fit: BoxFit.fill,
-                  frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                    if(frame == null) {
-                      return SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: Center(child: LoadingIndicator(os: getOs())),
-                      );
-                    }
-                    return child;
-                  },
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 4.0,
+            ),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: RepaintBoundary(
+                key: globalKey,
+                child: Hero(
+                  tag: tag,
+                  child: Container(
+                    decoration: const BoxDecoration(),
+                    child: Image.file(File(image!.path),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      fit: BoxFit.fitWidth,
+                      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                        if(frame == null) {
+                          return SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                            child: Center(child: LoadingIndicator(os: getOs())),
+                          );
+                        }
+                        return child;
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -6,9 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/presentation/modules/notesModule/AddNoteScreen.dart';
 import 'package:notes/presentation/modules/notesModule/DeletedNotesScreen.dart';
 import 'package:notes/presentation/modules/notesModule/SearchNoteScreen.dart';
-import 'package:notes/shared/adaptive/LoadingIndicator.dart';
 import 'package:notes/shared/components/Components.dart';
-import 'package:notes/shared/components/Constants.dart';
 import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
 import 'package:notes/shared/styles/Colors.dart';
@@ -45,7 +43,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
+                backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
                 content: const Text('Note Edited',
                   style: TextStyle(
                     color: Colors.white,
@@ -65,7 +63,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
+                backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
                 content: const Text('Note Moved To Recycle Bin',
                   style: TextStyle(
                     color: Colors.white,
@@ -84,7 +82,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
+                backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
                 content: const Text('All Notes Selected Moved To Recycle Bin',
                   style: TextStyle(
                     color: Colors.white,
@@ -107,7 +105,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  backgroundColor: isDarkTheme ? darkFloatColor : lightPrimaryColor,
+                  backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
                   content: const Text('Note Empty Discarded',
                     style: TextStyle(
                       color: Colors.white,
@@ -156,7 +154,7 @@ class _NotesScreenState extends State<NotesScreen> {
                   ),
                   tooltip: 'Recycle Bin',
                 ),
-                if(!cubit.isSelected)
+                if(!cubit.isSelected && cubit.notes.length > 8)
                 IconButton(
                     onPressed: () {
                       Navigator.of(context).push(createRoute(screen: const SearchNoteScreen()));
@@ -211,7 +209,7 @@ class _NotesScreenState extends State<NotesScreen> {
                 child: Text(
                   'There is no notes',
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 19.0,
                     letterSpacing: 0.6,
                     fontWeight: FontWeight.bold,
                   ),
@@ -221,17 +219,22 @@ class _NotesScreenState extends State<NotesScreen> {
             floatingActionButton: (!cubit.isSelected) ? Visibility(
               visible: isVisible,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FloatingActionButton(
-                  enableFeedback: true,
-                  tooltip: 'New Note',
-                  elevation: 8.0,
-                  onPressed: () {
-                    Navigator.of(context).push(createRoute(screen: const AddNoteScreen()));
-                  },
-                  child: const Icon(
-                    EvaIcons.edit2Outline,
-                    color: Colors.white,
+                padding: const EdgeInsets.all(12.0),
+                child: SizedBox(
+                  width: 60.0,
+                  height: 60.0,
+                  child: FloatingActionButton(
+                    enableFeedback: true,
+                    tooltip: 'New Note',
+                    elevation: 8.0,
+                    onPressed: () {
+                      Navigator.of(context).push(createRoute(screen: const AddNoteScreen()));
+                    },
+                    child: const Icon(
+                      EvaIcons.edit2Outline,
+                      color: Colors.white,
+                      size: 27.0,
+                    ),
                   ),
                 ),
               ),

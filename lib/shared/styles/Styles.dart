@@ -45,12 +45,12 @@ ThemeData darkTheme = ThemeData(
   useMaterial3: true,
   fontFamily: 'Varela',
   visualDensity: VisualDensity.adaptivePlatformDensity,
-  scaffoldBackgroundColor: HexColor('101010'),
+  scaffoldBackgroundColor: HexColor('141414'),
   colorScheme: ColorScheme.dark(
     primary: darkPrimaryColor,
   ),
   appBarTheme: AppBarTheme(
-    backgroundColor: HexColor('101010'),
+    backgroundColor: HexColor('141414'),
     iconTheme: const IconThemeData(
       color: Colors.white,
     ),
@@ -64,12 +64,12 @@ ThemeData darkTheme = ThemeData(
     ),
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarIconBrightness: Brightness.light,
-      statusBarColor: HexColor('101010'),
+      statusBarColor: HexColor('141414'),
       systemNavigationBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: HexColor('101010'),
+      systemNavigationBarColor: HexColor('141414'),
     ),
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: darkFloatColor,
+    backgroundColor: darkPrimaryColor,
   ),
 );
