@@ -1,16 +1,8 @@
 # notes
 
-A new Flutter project.
+A new Flutter app project ---> For adding (text, image), editing, deleting notes also generate a pdf for the note. 
 
-## Getting Started
+UI (some screens) ---> (https://github.com/SellamiWalid/notes_app/assets/119450519/7b37428b-be6a-4e29-a571-97f770fbddc0)
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+ 
