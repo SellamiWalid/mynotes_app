@@ -7,10 +7,10 @@ import 'package:pdf/widgets.dart';
 
 class Pdf {
 
-   static Future<File> generate({
+  Future<File> generate({
      required String title,
      required String content,
-     required String imagePath,
+     required List<dynamic> imagePaths,
 }) async {
 
      final pdf = Document();
@@ -18,12 +18,11 @@ class Pdf {
      var customFont = Font.ttf(await rootBundle.load("assets/fonts/VarelaRound-Regular.ttf"));
 
      pdf.addPage(MultiPage(
-         build: (context) => <Widget> [
+         build: (context) => [
            Paragraph(
                text: title,
-               textAlign: TextAlign.center,
                style: TextStyle(
-                   fontSize: 28.0,
+                   fontSize: 30.0,
                    letterSpacing: 0.6,
                    fontWeight: FontWeight.bold,
                    font: customFont)),
@@ -33,37 +32,45 @@ class Pdf {
            Paragraph(
                text: content,
                style: TextStyle(
-                   fontSize: 20.0,
+                   fontSize: 22.0,
                    letterSpacing: 0.6,
-                   height: 1.2,
+                   height: 2.2,
                    fontWeight: FontWeight.bold,
                    font: customFont)),
            SizedBox(
-             height: 60.0,
+             height: 40.0,
            ),
-           // Create image
-            if(imagePath != '')
-              Center(
-                child: Container(
-                  width: 250.0,
-                  height: 450.0,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1.0,
-                      color: PdfColors.grey,
-                    )
-                  ),
-                  child: Image(
-                    MemoryImage((File(imagePath).readAsBytesSync()).buffer.asUint8List()),
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ),
+           if (imagePaths.isNotEmpty) ...[
+             Wrap(
+               direction: Axis.horizontal,
+               children: imagePaths.map((imagePath) => buildItemImage(imagePath['image'])).toList(),
+               spacing: 80.0, // Spacing between images
+               runSpacing: 30.0, // Spacing between rows
+             ),
+           ],
          ]));
 
 
-     return saveDocument(name: 'Notes_$title.pdf', pdf: pdf);
+     return saveDocument(name: '${title}_Note.pdf', pdf: pdf);
 
+   }
+
+
+   Widget buildItemImage(String imagePath) {
+     return Container(
+       decoration: BoxDecoration(
+         border: Border.all(
+           width: 1.0,
+           color: PdfColors.blueGrey,
+         ),
+       ),
+       child: Image(
+         MemoryImage((File(imagePath).readAsBytesSync()).buffer.asUint8List()),
+         width: 200,
+         height: 300.0,
+         fit: BoxFit.contain,
+       ),
+     );
    }
 
 

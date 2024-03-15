@@ -47,6 +47,8 @@ dependencies:
   pdf: ^3.10.4
   path_provider: ^2.1.1
   open_filex: ^4.3.4
+  animate_do: ^3.3.4
+
   flutter_launcher_icons: "^0.13.1"
 
 flutter_launcher_icons:

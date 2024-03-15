@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,8 +7,14 @@ import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
 import 'package:notes/shared/styles/Colors.dart';
 
-class DeletedNotesScreen extends StatelessWidget {
+class DeletedNotesScreen extends StatefulWidget {
   const DeletedNotesScreen({super.key});
+
+  @override
+  State<DeletedNotesScreen> createState() => _DeletedNotesScreenState();
+}
+
+class _DeletedNotesScreenState extends State<DeletedNotesScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +31,12 @@ class DeletedNotesScreen extends StatelessWidget {
         if(state is SuccessRestoreFromRecycleBinAppState) {
 
           cubit.getFromDataBase(cubit.dataBase, context);
+
+          Future.delayed(const Duration(milliseconds: 200)).then((value) {
+            if(cubit.isSelected && cubit.notesDeleted.isEmpty) {
+              cubit.cancelAll(isDeleted: true);
+            }
+          });
 
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -60,6 +73,12 @@ class DeletedNotesScreen extends StatelessWidget {
         if(state is SuccessDeleteFromDataBaseAppState) {
 
           cubit.getFromDataBase(cubit.dataBase, context);
+
+          Future.delayed(const Duration(milliseconds: 200)).then((value) {
+            if(cubit.isSelected && cubit.notesDeleted.isEmpty) {
+              cubit.cancelAll(isDeleted: true);
+            }
+          });
 
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -98,13 +117,11 @@ class DeletedNotesScreen extends StatelessWidget {
 
         var cubit = AppCubit.get(context);
 
-        return WillPopScope(
-          onWillPop: () async {
+        return PopScope(
+          canPop: (cubit.isSelected) ? false : true,
+          onPopInvoked: (v) {
             if(cubit.isSelected) {
               cubit.cancelAll(isDeleted: true);
-              return false;
-            } else {
-              return true;
             }
           },
           child: Scaffold(
@@ -114,31 +131,37 @@ class DeletedNotesScreen extends StatelessWidget {
               },
               title: 'Recycle Bin',
               actions: [
-                if(cubit.isSelected && cubit.selectNotesDeleted.values.any((element) => element == true))
-                IconButton(
-                    onPressed: () {
-                      AppCubit.get(context).restoreAllNotesFromRecycleBin(
-                          selectNotesDel: cubit.selectNotesDeleted, context: context);
-                    },
-                    icon: Icon(
-                      Icons.replay,
-                      color: isDarkTheme ? anotherPrimaryColor : lightPrimaryColor,
-                      size: 30.0,
+                if(cubit.isSelected && cubit.selectNotesDeleted.values.any((element) => element == true)) ...[
+                  FadeInRight(
+                    duration: const Duration(milliseconds: 300),
+                    child: IconButton(
+                      onPressed: () {
+                        AppCubit.get(context).restoreAllNotesFromRecycleBin(
+                            selectNotesDel: cubit.selectNotesDeleted, context: context);
+                      },
+                      icon: Icon(
+                        Icons.replay,
+                        color: isDarkTheme ? anotherPrimaryColor : lightPrimaryColor,
+                        size: 30.0,
+                      ),
+                      tooltip: 'Restore',
                     ),
-                  tooltip: 'Restore',
-                ),
-                if(cubit.isSelected && cubit.selectNotesDeleted.values.any((element) => element == true))
-                IconButton(
-                    onPressed: () {
-                      AppCubit.get(context).deleteAllNotesFromDataBase(selectNotesDel: cubit.selectNotesDeleted);
-                    },
-                    icon: Icon(
-                      Icons.close_rounded,
-                      color: redColor,
-                      size: 30.0,
+                  ),
+                  FadeInRight(
+                    duration: const Duration(milliseconds: 300),
+                    child: IconButton(
+                      onPressed: () {
+                        AppCubit.get(context).deleteAllNotesFromDataBase(selectNotesDel: cubit.selectNotesDeleted);
+                      },
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: redColor,
+                        size: 30.0,
+                      ),
+                      tooltip: 'Remove',
                     ),
-                  tooltip: 'Remove',
-                ),
+                  ),
+                ],
                 const SizedBox(
                   width: 8.0,
                 ),
@@ -156,13 +179,16 @@ class DeletedNotesScreen extends StatelessWidget {
                 ),
                 itemCount: cubit.notesDeleted.length,
               ),
-              fallback: (context) => const Center(
-                child: Text(
-                  'No notes in recycle bin',
-                  style: TextStyle(
-                    fontSize: 19.0,
-                    letterSpacing: 0.6,
-                    fontWeight: FontWeight.bold,
+              fallback: (context) => Center(
+                child: FadeInLeft(
+                  duration: const Duration(milliseconds: 400),
+                  child: const Text(
+                    'No notes in recycle bin',
+                    style: TextStyle(
+                      fontSize: 19.0,
+                      letterSpacing: 0.6,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

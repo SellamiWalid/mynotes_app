@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AppCubit extends Cubit<AppStates> {
@@ -19,6 +21,7 @@ class AppCubit extends Cubit<AppStates> {
   var picker = ImagePicker();
 
   XFile? image;
+  List<File> imagePaths = [];
 
 
   void createDataBase(context) async {
@@ -80,8 +83,10 @@ class AppCubit extends Cubit<AppStates> {
 
         getFromDataBase(dataBase, context);
 
-        if(image != null) {
-          addImageNoteInDataBase(id: value, imagePath: image!.path);
+        if(imagePaths.isNotEmpty) {
+          for(var element in imagePaths) {
+            addImageNoteInDataBase(id: value, imagePath: element.path);
+          }
         }
 
       }).catchError((error) {
@@ -105,7 +110,11 @@ class AppCubit extends Cubit<AppStates> {
 
     if(pickedFile != null) {
 
-      image = XFile(pickedFile.path);
+      final appDir = await getApplicationDocumentsDirectory();
+      final newPath = '${appDir.path}/${pickedFile.name}';
+      final imageFile = await File(pickedFile.path).copy(newPath);
+      imagePaths.add(imageFile);
+
       emit(SuccessGetImageAppState());
 
     } else {
@@ -116,10 +125,17 @@ class AppCubit extends Cubit<AppStates> {
 
   }
 
-  void clearImage() {
-    image = null;
+  void clearImage(index) {
+    imagePaths.removeAt(index);
     emit(SuccessClearAppState());
   }
+
+
+  void clearAllImages() {
+    imagePaths.clear();
+    emit(SuccessClearAppState());
+  }
+
 
 
   Future<void> addImageNoteInDataBase({
@@ -159,9 +175,9 @@ class AppCubit extends Cubit<AppStates> {
 
       dataImg = value;
 
-      if (kDebugMode) {
-        print(value);
-      }
+      // if (kDebugMode) {
+      //   print(value);
+      // }
 
       emit(SuccessGetImageNoteFromDataBaseAppState());
 
@@ -178,30 +194,31 @@ class AppCubit extends Cubit<AppStates> {
 
 
 
-  void updateImageNoteFromDataBase({
-    required int id,
-    required String imagePath
-  }) {
+  // void updateImageNoteFromDataBase({
+  //   required int id,
+  //   required String imagePath,
+  // }) {
+  //
+  //   dataBase?.rawUpdate('UPDATE Images SET image = ? WHERE id = ?',
+  //       [imagePath, id]).then((value) {
+  //
+  //     emit(SuccessUpdateImageNoteFromDataBaseAppState());
+  //   }).catchError((error) {
+  //
+  //     if (kDebugMode) {
+  //       print('${error.toString()} --> in remove image note from database');
+  //     }
+  //     emit(ErrorUpdateImageNoteFromDataBaseAppState());
+  //   });
+  // }
 
-    dataBase?.rawUpdate('UPDATE Images SET image = ? WHERE id_note = ?',
-        [imagePath, id]).then((value) {
-
-      emit(SuccessUpdateImageNoteFromDataBaseAppState());
-    }).catchError((error) {
-
-      if (kDebugMode) {
-        print('${error.toString()} --> in remove image note from database');
-      }
-      emit(ErrorUpdateImageNoteFromDataBaseAppState());
-    });
-  }
 
 
   void deleteImageNoteFromDataBase({
     required int id
   }) {
 
-    dataBase?.rawDelete('DELETE FROM Images WHERE id_note = ?',
+    dataBase?.rawDelete('DELETE FROM Images WHERE id = ?',
         [id]).then((value) {
 
       emit(SuccessDeleteImageNoteFromDataBaseAppState());
@@ -235,7 +252,6 @@ class AppCubit extends Cubit<AppStates> {
           deleteFromDataBase(id: element['id'], isEmptyNote: true);
         }
 
-
         if(element['status'] == 'New') {
 
           notes.add(element);
@@ -254,6 +270,8 @@ class AppCubit extends Cubit<AppStates> {
 
         }
       }
+
+      if(imagePaths.isNotEmpty) clearAllImages();
 
       emit(SuccessGetFromDataBaseAppState());
 
@@ -346,16 +364,11 @@ class AppCubit extends Cubit<AppStates> {
     await dataBase?.rawUpdate('UPDATE Notes SET title = ?, content = ?, date = ?, date_time = ? WHERE id = ?',
         [title, content, date, dateTime, id]).then((value) {
 
-          if(dataImg.isNotEmpty) {
-            if(image != null) {
-              updateImageNoteFromDataBase(id: id, imagePath: image!.path);
-            }
-          } else {
-            if(image != null) {
-              addImageNoteInDataBase(id: id, imagePath: image!.path);
+          if(imagePaths.isNotEmpty) {
+            for(var element in imagePaths) {
+              addImageNoteInDataBase(id: id, imagePath: element.path);
             }
           }
-
 
          emit(SuccessUpdateIntoDataBaseAppState(isEmptyNote));
 
@@ -424,7 +437,7 @@ class AppCubit extends Cubit<AppStates> {
 
     }
 
-    cancelAll(isDeleted: false);
+    cancelAll();
     emit(SuccessMoveAllSelectedNotesToRecycleBinAppState());
 
   }
@@ -493,15 +506,11 @@ class AppCubit extends Cubit<AppStates> {
   void deleteFromDataBase({
     required int id,
     bool isEmptyNote = false,
-}) {
+}) async {
 
-    dataBase?.rawDelete('DELETE FROM Notes WHERE id = ?',[id]).then((value) {
+    await dataBase?.rawDelete('DELETE FROM Notes WHERE id = ?',[id]).then((value) {
 
       emit(SuccessDeleteFromDataBaseAppState(isEmptyNote));
-
-      // if(dataImg.isNotEmpty) {
-      //   deleteImageNoteFromDataBase(id: id);
-      // }
 
     }).catchError((error) {
 
@@ -516,14 +525,6 @@ class AppCubit extends Cubit<AppStates> {
   }
 
 
-  // void clearItem(id) {
-  //   int index = notes.indexOf(id);
-  //   notesDeleted.removeAt(index);
-  //   emit(SuccessClearAppState());
-  // }
-
-
-
   void deleteAllNotesFromDataBase({
     required Map selectNotesDel,
   }) {
@@ -535,10 +536,6 @@ class AppCubit extends Cubit<AppStates> {
         dataBase?.rawDelete('DELETE FROM Notes WHERE id = ?',[element]).then((value) {
 
           emit(SuccessDeleteNoteFromDataBaseAppState());
-
-          // if(dataImg.isNotEmpty) {
-          //   deleteImageNoteFromDataBase(id: element);
-          // }
 
         }).catchError((error) {
 
@@ -556,9 +553,6 @@ class AppCubit extends Cubit<AppStates> {
     emit(SuccessDeleteAllNotesFromDataBaseAppState());
 
   }
-
-
-
 
 
   List<dynamic> searchNotes = [];

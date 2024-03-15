@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         title: 'Notes Flutter App',
         theme: lightTheme,
         darkTheme: darkTheme,
-        themeMode: ThemeMode.dark,
+        themeMode: ThemeMode.system,
         home: const NotesScreen(),
       ),
     );

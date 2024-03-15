@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:notes/shared/styles/Colors.dart';
 
 ThemeData lightTheme = ThemeData(
@@ -13,12 +12,13 @@ ThemeData lightTheme = ThemeData(
   ),
   appBarTheme: const AppBarTheme(
     backgroundColor: Colors.white,
+    scrolledUnderElevation: 0.0,
     iconTheme: IconThemeData(
       color: Colors.black,
     ),
     elevation: 0,
     titleTextStyle: TextStyle(
-      fontSize: 19.0,
+      fontSize: 18.0,
       letterSpacing: 0.6,
       color: Colors.black,
       fontFamily: 'Varela',
@@ -45,18 +45,19 @@ ThemeData darkTheme = ThemeData(
   useMaterial3: true,
   fontFamily: 'Varela',
   visualDensity: VisualDensity.adaptivePlatformDensity,
-  scaffoldBackgroundColor: HexColor('141414'),
+  scaffoldBackgroundColor: darkColor,
   colorScheme: ColorScheme.dark(
     primary: darkPrimaryColor,
   ),
   appBarTheme: AppBarTheme(
-    backgroundColor: HexColor('141414'),
+    backgroundColor: darkColor,
+    scrolledUnderElevation: 0.0,
     iconTheme: const IconThemeData(
       color: Colors.white,
     ),
     elevation: 0,
     titleTextStyle: const TextStyle(
-      fontSize: 19.0,
+      fontSize: 18.0,
       letterSpacing: 0.6,
       color: Colors.white,
       fontFamily: 'Varela',
@@ -64,9 +65,9 @@ ThemeData darkTheme = ThemeData(
     ),
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarIconBrightness: Brightness.light,
-      statusBarColor: HexColor('141414'),
+      statusBarColor: darkColor,
       systemNavigationBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: HexColor('141414'),
+      systemNavigationBarColor: darkColor,
     ),
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
