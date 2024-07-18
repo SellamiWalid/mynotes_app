@@ -11,18 +11,42 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notes/presentation/modules/notesModule/EditNoteScreen.dart';
 import 'package:notes/shared/adaptive/LoadingIndicator.dart';
 import 'package:notes/shared/components/Constants.dart';
+import 'package:notes/shared/components/extentions.dart';
 import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/styles/Colors.dart';
 
 
 navigateTo({required BuildContext context , required Widget screen}) =>
-    Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
+    Navigator.push(context,
+       PageRouteBuilder(
+         pageBuilder: (context, animation, secondaryAnimation) => screen,
+         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           return FadeTransition(
+               opacity: animation,
+               child: child,
+           );
+         },
+       ),
+    );
 
 
 
 navigateAndNotReturn({required BuildContext context, required Widget screen}) =>
     Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) => screen), (route) => false);
+        PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => screen,
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              var begin = const Offset(0.0, 1.0);
+              var end = Offset.zero;
+              var curve = Curves.easeIn;
+              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+              );
+
+            },),
+            (route) => false);
 
 
 
@@ -86,8 +110,8 @@ Route createThirdRoute({required screen}) {
 
 
 
-Widget buildItemNote(note, selectNote, isDarkTheme, context) => SlideInRight(
-  duration: const Duration(milliseconds: 400),
+Widget buildItemNote(note, selectNote, isDarkTheme, context) => FadeInLeft(
+  duration: const Duration(milliseconds: 500),
   child: Dismissible(
     key: UniqueKey(),
     onDismissed: (direction) {
@@ -114,7 +138,9 @@ Widget buildItemNote(note, selectNote, isDarkTheme, context) => SlideInRight(
       },
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        elevation: isDarkTheme ? 12.0 : 8.0,
+        elevation: isDarkTheme ? 8.0 : 5.0,
+        surfaceTintColor: isDarkTheme ? Theme.of(context).colorScheme.primary
+            : lightBgColor,
         margin: const EdgeInsets.symmetric(
           horizontal: 14.0,
           vertical: 12.0,
@@ -138,9 +164,7 @@ Widget buildItemNote(note, selectNote, isDarkTheme, context) => SlideInRight(
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 40.0,
-                  ),
+                  40.0.hrSpace,
                   if(!AppCubit.get(context).isSelected)
                   FadeIn(
                     duration: const Duration(milliseconds: 200),
@@ -190,9 +214,7 @@ Widget buildItemNote(note, selectNote, isDarkTheme, context) => SlideInRight(
                 ],
               ),
               if(note['title'] != '')
-              const SizedBox(
-                height: 6.0,
-              ),
+             6.0.vrSpace,
               Text(
                '${note['date']}',
                 style: TextStyle(
@@ -201,9 +223,7 @@ Widget buildItemNote(note, selectNote, isDarkTheme, context) => SlideInRight(
                 ),
               ),
               if(note['content'] != '')
-              const SizedBox(
-                height: 14.0,
-              ),
+              14.0.vrSpace,
               if(note['content'] != '')
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -229,8 +249,8 @@ Widget buildItemNote(note, selectNote, isDarkTheme, context) => SlideInRight(
   ),
 );
 
-Widget buildItemNoteDeleted(note, selectNoteDeleted, isDarkTheme, context) => SlideInLeft(
-  duration: const Duration(milliseconds: 400),
+Widget buildItemNoteDeleted(note, selectNoteDeleted, isDarkTheme, context) => FadeInLeft(
+  duration: const Duration(milliseconds: 500),
   child: Dismissible(
     key: UniqueKey(),
     onDismissed: (direction) {
@@ -254,7 +274,9 @@ Widget buildItemNoteDeleted(note, selectNoteDeleted, isDarkTheme, context) => Sl
       },
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        elevation: isDarkTheme ? 12.0 : 8.0,
+        elevation: isDarkTheme ? 8.0 : 5.0,
+        surfaceTintColor: isDarkTheme ? Theme.of(context).colorScheme.primary
+            : lightBgColor,
         margin: const EdgeInsets.symmetric(
           horizontal: 14.0,
           vertical: 12.0,
@@ -278,9 +300,7 @@ Widget buildItemNoteDeleted(note, selectNoteDeleted, isDarkTheme, context) => Sl
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 40.0,
-                  ),
+                  40.0.hrSpace,
                   Row(
                     children: [
                       if(!AppCubit.get(context).isSelected)
@@ -360,9 +380,7 @@ Widget buildItemNoteDeleted(note, selectNoteDeleted, isDarkTheme, context) => Sl
                 ],
               ),
               if(note['title'] != '')
-              const SizedBox(
-                height: 6.0,
-              ),
+              6.0.vrSpace,
               Text(
                '${note['date']}',
                 style: TextStyle(
@@ -371,9 +389,7 @@ Widget buildItemNoteDeleted(note, selectNoteDeleted, isDarkTheme, context) => Sl
                 ),
               ),
               if(note['content'] != '')
-              const SizedBox(
-                height: 14.0,
-              ),
+              14.0.vrSpace,
               if(note['content'] != '')
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -473,9 +489,9 @@ dynamic showLoading(context, isDarkTheme) => showDialog(
                 padding: const EdgeInsets.all(26.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18.0),
-                  color: (isDarkTheme) ? HexColor('202020') : Colors.white,
+                  color: (isDarkTheme) ? HexColor('141d26') : Colors.white,
                 ),
-                clipBehavior: Clip.antiAliasWithSaveLayer,
+                clipBehavior: Clip.antiAlias,
                 child: LoadingIndicator(os: getOs())),
           ),
         );
@@ -485,12 +501,11 @@ dynamic showLoading(context, isDarkTheme) => showDialog(
 void showOptions(isDarkTheme, context) {
   showModalBottomSheet(
       context: context,
-      builder: (context)
-      {
+      builder: (context) {
         return SafeArea(
           child: Material(
             color: isDarkTheme ?
-               darkColor : Colors.white,
+               darkBgColor : lightBgColor,
             child: Wrap(
               children: <Widget>[
                 ListTile(
@@ -518,7 +533,6 @@ void showOptions(isDarkTheme, context) {
           ),
         );
       });
-
 }
 
 
@@ -535,7 +549,7 @@ Widget buildItemImagePicked(AppCubit cubit, File imagePicked, index, isDarkTheme
       children: [
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: BorderRadius.circular(22.0),
             border: Border.all(
               width: 1.0,
               color: isDarkTheme ? Colors.white : Colors.black,
@@ -621,8 +635,8 @@ void scrollToBottom(scrollController) {
   if(scrollController.hasClients) {
     scrollController.animateTo(
         scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 700),
-        curve: Curves.easeOut);
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOut);
   }
 }
 
@@ -650,8 +664,6 @@ Future<void> saveImage(GlobalKey globalKey, context) async {
     await ImageGallerySaver.saveImage(imageBytes!);
 
   });
-
-
 }
 
 
@@ -697,17 +709,14 @@ dynamic showFullImage(image, isDarkTheme, context) {
       ),
     ),
   ),));
-
-
 }
+
 
 dynamic showFullImageAndSave(id, GlobalKey globalKey, image, isDarkTheme, context) {
 
   return Navigator.of(context).push(createSecondRoute(screen: Scaffold(
     appBar: defaultAppBar(
-        onPress: () {
-          Navigator.pop(context);
-        },
+        onPress: () {Navigator.pop(context);},
       actions: [
         PopupMenuButton(
           clipBehavior: Clip.antiAlias,
@@ -777,9 +786,7 @@ dynamic showFullImageAndSave(id, GlobalKey globalKey, image, isDarkTheme, contex
             }
           },
         ),
-        const SizedBox(
-          width: 4.0,
-        ),
+        4.0.hrSpace,
       ],
     ),
     body: SafeArea(

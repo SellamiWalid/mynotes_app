@@ -4,6 +4,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/shared/components/Components.dart';
+import 'package:notes/shared/components/extentions.dart';
 import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
 import 'package:notes/shared/styles/Colors.dart';
@@ -74,9 +75,7 @@ class _SearchNoteScreenState extends State<SearchNoteScreen> {
                 Navigator.pop(context);
                 focusNode.unfocus();
                 cubit.clearSearch();
-                if(cubit.isSelected) {
-                  cubit.cancelAll();
-                }
+                if(cubit.isSelected) {cubit.cancelAll();}
               },
               title: 'Search Note',
               actions: [
@@ -95,9 +94,7 @@ class _SearchNoteScreenState extends State<SearchNoteScreen> {
                       tooltip: 'Move To Bin',
                     ),
                   ),
-                const SizedBox(
-                  width: 8.0,
-                ),
+                8.0.hrSpace,
               ],
             ),
             body: FadeInUp(
@@ -164,9 +161,7 @@ class _SearchNoteScreenState extends State<SearchNoteScreen> {
                         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                         itemBuilder: (context , index) => buildItemNote(cubit.searchNotes[index], cubit.selectNotes,
                             isDarkTheme, context),
-                        separatorBuilder: (context , index) => const SizedBox(
-                          height: 8.0,
-                        ),
+                        separatorBuilder: (context , index) => 8.0.vrSpace,
                         itemCount: cubit.searchNotes.length,
                       ),
                       fallback: (context) => (!cubit.isSearch) ? Center(

@@ -11,6 +11,7 @@ class LoadingIndicator extends StatelessWidget {
      if(os == 'android') {
        return CircularProgressIndicator(
          color: lightPrimaryColor,
+         strokeCap: StrokeCap.round,
        );
      } else {
        return CupertinoActivityIndicator(

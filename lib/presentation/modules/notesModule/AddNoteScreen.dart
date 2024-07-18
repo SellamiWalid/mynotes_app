@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:notes/shared/components/Components.dart';
+import 'package:notes/shared/components/extentions.dart';
 import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
 import 'package:notes/shared/styles/Colors.dart';
@@ -29,18 +30,16 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   @override
   void initState() {
     super.initState();
-    titleController.addListener(() {
-      setState(() {});
-    });
-    contentController.addListener(() {
-      setState(() {});
-    });
+    titleController.addListener(() {setState(() {});});
+    contentController.addListener(() {setState(() {});});
   }
 
   @override
   void dispose() {
     titleController.dispose();
+    titleController.removeListener(() {setState(() {});});
     contentController.dispose();
+    contentController.removeListener(() {setState(() {});});
     scrollController.dispose();
     super.dispose();
   }
@@ -123,9 +122,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                     tooltip: 'Add Image',
                   ),
                 ),
-                const SizedBox(
-                  width: 8.0,
-                ),
+                8.0.hrSpace,
               ]
             ),
             body: SingleChildScrollView(
@@ -142,22 +139,16 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           controller: titleController,
                           focusNode: focusNode1,
                           hintText: 'Title',
-                          onPress: () {
-                            FocusScope.of(context).requestFocus(focusNode2);
-                          },
+                          onPress: () {FocusScope.of(context).requestFocus(focusNode2);},
                       ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
+                      20.0.vrSpace,
                       defaultTextFormField(
                         controller: contentController,
                         focusNode: focusNode2,
                         hintText: 'Content',
                         isTitle: false,
                       ),
-                      const SizedBox(
-                        height: 40.0,
-                      ),
+                     40.0.vrSpace,
                       if(cubit.imagePaths.isNotEmpty) ...[
                         FadeIn(
                           duration: const Duration(milliseconds: 200),
@@ -169,9 +160,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 12.0,
-                        ),
+                        12.0.vrSpace,
                         GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),

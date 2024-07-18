@@ -3,54 +3,51 @@ import 'package:flutter/services.dart';
 import 'package:notes/shared/styles/Colors.dart';
 
 ThemeData lightTheme = ThemeData(
-  useMaterial3: true,
-  fontFamily: 'Varela',
-  visualDensity: VisualDensity.adaptivePlatformDensity,
-  scaffoldBackgroundColor: Colors.white,
-  colorScheme: ColorScheme.light(
-    primary: lightPrimaryColor,
-  ),
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.white,
-    scrolledUnderElevation: 0.0,
-    iconTheme: IconThemeData(
-      color: Colors.black,
+    useMaterial3: true,
+    fontFamily: 'Varela',
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    scaffoldBackgroundColor: lightBgColor,
+    colorScheme: ColorScheme.light(
+      primary: lightPrimaryColor,
     ),
-    elevation: 0,
-    titleTextStyle: TextStyle(
-      fontSize: 18.0,
-      letterSpacing: 0.6,
-      color: Colors.black,
-      fontFamily: 'Varela',
-      fontWeight: FontWeight.bold,
+    appBarTheme: AppBarTheme(
+      backgroundColor: lightBgColor,
+      scrolledUnderElevation: 0.0,
+      iconTheme: const IconThemeData(
+        color: Colors.black,
+      ),
+      elevation: 0,
+      titleTextStyle: const TextStyle(
+        fontSize: 18.0,
+        letterSpacing: 0.6,
+        color: Colors.black,
+        fontFamily: 'Varela',
+        fontWeight: FontWeight.bold,
+      ),
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.dark,
+        statusBarColor: lightBgColor,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: lightBgColor,
+        statusBarBrightness: Brightness.dark,
+      ),
     ),
-    systemOverlayStyle: SystemUiOverlayStyle(
-      statusBarIconBrightness: Brightness.dark,
-      statusBarColor: Colors.white,
-      systemNavigationBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Colors.white,
-    ),
-  ),
-  floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: lightPrimaryColor,
-  )
-);
-
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: lightPrimaryColor,
+    ));
 
 // 191C1E
-
-
 
 ThemeData darkTheme = ThemeData(
   useMaterial3: true,
   fontFamily: 'Varela',
   visualDensity: VisualDensity.adaptivePlatformDensity,
-  scaffoldBackgroundColor: darkColor,
+  scaffoldBackgroundColor: darkBgColor,
   colorScheme: ColorScheme.dark(
     primary: darkPrimaryColor,
   ),
   appBarTheme: AppBarTheme(
-    backgroundColor: darkColor,
+    backgroundColor: darkBgColor,
     scrolledUnderElevation: 0.0,
     iconTheme: const IconThemeData(
       color: Colors.white,
@@ -65,9 +62,10 @@ ThemeData darkTheme = ThemeData(
     ),
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarIconBrightness: Brightness.light,
-      statusBarColor: darkColor,
-      systemNavigationBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: darkColor,
+      statusBarColor: darkBgColor,
+      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: darkBgColor,
+      statusBarBrightness: Brightness.light,
     ),
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(

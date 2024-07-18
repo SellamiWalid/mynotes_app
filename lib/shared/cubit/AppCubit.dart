@@ -20,7 +20,6 @@ class AppCubit extends Cubit<AppStates> {
 
   var picker = ImagePicker();
 
-  XFile? image;
   List<File> imagePaths = [];
 
 
@@ -31,6 +30,7 @@ class AppCubit extends Cubit<AppStates> {
       version: 2,
       onCreate: (dataBase , version) async {
         try {
+          await dataBase.execute('PRAGMA foreign_keys = ON');
           await dataBase.execute('CREATE TABLE Notes (id INTEGER PRIMARY KEY, title TEXT, content TEXT, date TEXT, date_time TEXT, status TEXT)');
           await dataBase.execute('CREATE TABLE Images (id INTEGER PRIMARY KEY, image TEXT, id_note INTEGER, FOREIGN KEY(id_note) REFERENCES Notes(id) ON DELETE CASCADE)');
           if (kDebugMode) {
@@ -46,11 +46,11 @@ class AppCubit extends Cubit<AppStates> {
         if (kDebugMode) {
           print('DataBase opened');
         }
-         getFromDataBase(dataBase, context);
+        dataBase.execute('PRAGMA foreign_keys = ON');
+        getFromDataBase(dataBase, context);
       }
 
     ).then((value) {
-
       dataBase = value;
       emit(SuccessCreateDataBaseAppState());
 
@@ -168,16 +168,15 @@ class AppCubit extends Cubit<AppStates> {
 
   void getImageNoteFromDataBase(id, dataBase) async {
 
+    if (kDebugMode) {
+      print(id);
+    }
+
     await dataBase?.rawQuery('SELECT * FROM Images WHERE id_note = ?',
         [id]).then((value) {
 
       dataImg = [];
-
       dataImg = value;
-
-      // if (kDebugMode) {
-      //   print(value);
-      // }
 
       emit(SuccessGetImageNoteFromDataBaseAppState());
 
@@ -191,27 +190,6 @@ class AppCubit extends Cubit<AppStates> {
     });
 
   }
-
-
-
-  // void updateImageNoteFromDataBase({
-  //   required int id,
-  //   required String imagePath,
-  // }) {
-  //
-  //   dataBase?.rawUpdate('UPDATE Images SET image = ? WHERE id = ?',
-  //       [imagePath, id]).then((value) {
-  //
-  //     emit(SuccessUpdateImageNoteFromDataBaseAppState());
-  //   }).catchError((error) {
-  //
-  //     if (kDebugMode) {
-  //       print('${error.toString()} --> in remove image note from database');
-  //     }
-  //     emit(ErrorUpdateImageNoteFromDataBaseAppState());
-  //   });
-  // }
-
 
 
   void deleteImageNoteFromDataBase({

@@ -8,6 +8,7 @@ import 'package:notes/presentation/modules/notesModule/AddNoteScreen.dart';
 import 'package:notes/presentation/modules/notesModule/DeletedNotesScreen.dart';
 import 'package:notes/presentation/modules/notesModule/SearchNoteScreen.dart';
 import 'package:notes/shared/components/Components.dart';
+import 'package:notes/shared/components/Extentions.dart';
 import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
 import 'package:notes/shared/styles/Colors.dart';
@@ -42,16 +43,16 @@ class _NotesScreenState extends State<NotesScreen> {
           if(!state.isEmptyNote) {
 
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
-                content: const Text('Note Edited',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                SnackBar(
+                  backgroundColor: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
+                  content: const Text('Note Edited',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                duration: const Duration(milliseconds: 850),
-              ));
+                  duration: const Duration(milliseconds: 850),
+                ));
           }
 
         }
@@ -138,13 +139,14 @@ class _NotesScreenState extends State<NotesScreen> {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: SlideInLeft(
+              title: FadeIn(
                 duration: const Duration(milliseconds: 400),
                 child: const Text(
                   'Notes',
                   style: TextStyle(
                     fontFamily: 'Josefin',
-                    fontSize: 24.0,
+                    letterSpacing: 0.6,
+                    fontSize: 22.0,
                   ),
                 ),
               ),
@@ -195,9 +197,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     ),
                   ),
                 ],
-                const SizedBox(
-                  width: 8.0,
-                ),
+                8.0.hrSpace,
               ],
             ),
             body: ConditionalBuilder(
@@ -205,32 +205,46 @@ class _NotesScreenState extends State<NotesScreen> {
               builder: (context) => NotificationListener<UserScrollNotification>(
                 onNotification: (notification) {
                   if(notification.direction == ScrollDirection.forward) {
-                    setState(() {
-                      isVisible = true;
-                    });
+                    setState(() {isVisible = true;});
                   } else if(notification.direction == ScrollDirection.reverse) {
-                    setState(() {
-                      isVisible = false;
-                    });
+                    setState(() {isVisible = false;});
                   }
                   return true;
                 },
                 child: ListView.separated(
                   physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context , index) => buildItemNote(cubit.notes[index], cubit.selectNotes, isDarkTheme, context),
-                  separatorBuilder: (context , index) => const SizedBox(
-                    height: 8.0,
-                  ),
+                  itemBuilder: (context , index) => buildItemNote(cubit.notes[index],
+                      cubit.selectNotes, isDarkTheme, context),
+                  separatorBuilder: (context , index) => 8.0.vrSpace,
                   itemCount: cubit.notes.length,
                 ),
               ),
-              fallback: (context) => const Center(
-                child: Text(
-                  'There is no notes',
-                  style: TextStyle(
-                    fontSize: 19.0,
-                    letterSpacing: 0.6,
-                    fontWeight: FontWeight.bold,
+              fallback: (context) => Center(
+                child: FadeIn(
+                  duration: const Duration(milliseconds: 400),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'There is no notes',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 19.0,
+                          letterSpacing: 0.6,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      12.0.vrSpace,
+                      const Text(
+                        'Press on the button to create one',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          color: Colors.grey,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

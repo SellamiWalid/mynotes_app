@@ -5,6 +5,7 @@ import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/styles/Styles.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

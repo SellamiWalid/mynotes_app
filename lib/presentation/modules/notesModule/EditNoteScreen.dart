@@ -2,10 +2,13 @@ import 'dart:async';
 import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:notes/shared/components/Components.dart';
+import 'package:notes/shared/components/extentions.dart';
 import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
 import 'package:notes/shared/pdf/Pdf.dart';
@@ -38,20 +41,18 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     required String content,
     required List<dynamic> imagePaths,
   }) async {
-    Completer<File> completer = Completer();
 
-    // Start the PDF generation in the background
-    Future(() async {
-     await Pdf().generate(
-          title: title,
-          content: content,
-          imagePaths: imagePaths,
-        ).then((value) {
+    final fontData = await rootBundle.load('assets/fonts/VarelaRound-Regular.ttf');
+
+    final RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
+    final Completer<File> completer = Completer();
+
+    await compute(generateDoc, [title, content,
+       imagePaths, rootIsolateToken, fontData]).then((value) {
        completer.complete(value);
-     }).catchError((error) {
+       }).catchError((error) {
        completer.completeError(error);
      });
-    });
 
     return completer.future;
   }
@@ -60,14 +61,19 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
   @override
   void initState() {
     super.initState();
-    titleController.addListener(() {
-      setState(() {});
-    });
-    contentController.addListener(() {
-      setState(() {});
-    });
+    titleController.addListener(() {setState(() {});});
+    contentController.addListener(() {setState(() {});});
     titleController.text = widget.note['title'];
     contentController.text = widget.note['content'];
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    contentController.dispose();
+    titleController.removeListener(() {setState(() {});});
+    contentController.removeListener(() {setState(() {});});
+    super.dispose();
   }
 
     @override
@@ -84,14 +90,14 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
         if(state is SuccessGetImageAppState) {
 
-          if(getSizeImage(cubit) > 7340032) {  // 7MB
+          if(getSizeImage(cubit) > 10485760) {  // 10MB
 
             cubit.clearAllImages();
             Future.delayed(const Duration(milliseconds: 300)).then((value) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     backgroundColor: redColor,
-                    content: const Text('Image is bigger than 7MB',
+                    content: const Text('Image is bigger than 10MB',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -141,7 +147,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
               actions: [
                 if(titleController.text.isNotEmpty &&
                     titleController.text.trim().isNotEmpty &&
-                    (cubit.dataImg.length + cubit.imagePaths.length) < 6)
+                    (cubit.dataImg.length + cubit.imagePaths.length) < 5)
                   FadeIn(
                     duration: const Duration(milliseconds: 300),
                     child: IconButton(
@@ -174,7 +180,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                         ).then((value) async {
                              await Future.delayed(const Duration(milliseconds: 500)).then((v) async {
                                Navigator.pop(context);
-                               await Pdf.openFile(value);
+                               await openFile(value);
                              });
                         });
                       },
@@ -186,9 +192,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                     tooltip: 'PDF',
                   ),
                 ),
-                const SizedBox(
-                  width: 8.0,
-                ),
+                8.0.hrSpace,
               ],
             ),
             body: SingleChildScrollView(
@@ -209,32 +213,26 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                             FocusScope.of(context).requestFocus(focusNode2);
                           },
                       ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
+                     20.0.vrSpace,
                       defaultTextFormField(
                         controller: contentController,
                         focusNode: focusNode2,
                         hintText: 'Content',
                         isTitle: false,
                       ),
-                      const SizedBox(
-                        height: 40.0,
-                      ),
+                     40.0.vrSpace,
                       if(cubit.dataImg.isNotEmpty || cubit.imagePaths.isNotEmpty)
                         FadeIn(
                           duration: const Duration(milliseconds: 200),
                           child: Text(
-                            '${cubit.dataImg.length + cubit.imagePaths.length} / 6',
+                            '${cubit.dataImg.length + cubit.imagePaths.length} / 5',
                             style: const TextStyle(
                               fontSize: 16.0,
                               letterSpacing: 0.6,
                             ),
                           ),
                         ),
-                      const SizedBox(
-                        height: 12.0,
-                      ),
+                     12.0.vrSpace,
                       if(cubit.dataImg.isNotEmpty)
                         GridView.builder(
                           shrinkWrap: true,
@@ -250,9 +248,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                               cubit.dataImg[index]['image'], isDarkTheme),
                           itemCount: cubit.dataImg.length,
                         ),
-                      const SizedBox(
-                        height: 16.0,
-                      ),
+                      16.0.vrSpace,
                       if(cubit.imagePaths.isNotEmpty) ...[
                         if(cubit.dataImg.isNotEmpty) ...[
                           FadeIn(
@@ -269,9 +265,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                             Icons.keyboard_arrow_down_rounded,
                             color: isDarkTheme ? Colors.white : Colors.black,
                           ),
-                          const SizedBox(
-                            height: 12.0,
-                          ),
+                         12.0.vrSpace,
                         ],
                         GridView.builder(
                           shrinkWrap: true,

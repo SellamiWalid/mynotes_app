@@ -3,6 +3,7 @@ import 'package:conditional_builder_null_safety/conditional_builder_null_safety.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/shared/components/Components.dart';
+import 'package:notes/shared/components/extentions.dart';
 import 'package:notes/shared/cubit/AppCubit.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
 import 'package:notes/shared/styles/Colors.dart';
@@ -49,7 +50,6 @@ class _DeletedNotesScreenState extends State<DeletedNotesScreen> {
                 ),
                 duration: const Duration(milliseconds: 850),
               ));
-
         }
 
         if(state is SuccessRestoreAllNotesFromRecycleBinAppState) {
@@ -109,9 +109,7 @@ class _DeletedNotesScreenState extends State<DeletedNotesScreen> {
                 ),
                 duration: const Duration(milliseconds: 850),
               ));
-
         }
-
       },
       builder: (context , state) {
 
@@ -162,9 +160,7 @@ class _DeletedNotesScreenState extends State<DeletedNotesScreen> {
                     ),
                   ),
                 ],
-                const SizedBox(
-                  width: 8.0,
-                ),
+                8.0.hrSpace,
               ],
             ),
             body: ConditionalBuilder(
@@ -174,9 +170,7 @@ class _DeletedNotesScreenState extends State<DeletedNotesScreen> {
                 keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 itemBuilder: (context , index) => buildItemNoteDeleted(cubit.notesDeleted[index], cubit.selectNotesDeleted,
                     isDarkTheme, context),
-                separatorBuilder: (context , index) => const SizedBox(
-                  height: 8.0,
-                ),
+                separatorBuilder: (context , index) => 8.0.vrSpace,
                 itemCount: cubit.notesDeleted.length,
               ),
               fallback: (context) => Center(
@@ -186,7 +180,7 @@ class _DeletedNotesScreenState extends State<DeletedNotesScreen> {
                     'No notes in recycle bin',
                     style: TextStyle(
                       fontSize: 19.0,
-                      letterSpacing: 0.6,
+                      letterSpacing: 1.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
