@@ -1,4 +1,4 @@
-# notes
+# mynotes
 
 A new Flutter app project ---> For adding (text, images), editing, deleting notes also generate a pdf for the note. 
 
