@@ -47,7 +47,9 @@
 	<true/>
 	<key>com.apple.security.network.client</key>
     <true/>
-    <key>NSCameraUsageDescription</key>
-    <string>We need access to your camera for scanning documents.</string>
+   <key>NSCameraUsageDescription</key>
+   <string>MyNotes uses the camera for image/text chat</string>
+   <key>NSPhotoLibraryUsageDescription</key>
+   <string>MyNotes uses the photo library for image/text chat</string>
 </dict>
 </plist>

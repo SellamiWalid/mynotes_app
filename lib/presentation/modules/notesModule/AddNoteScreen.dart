@@ -59,14 +59,14 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
         if(state is SuccessGetImageAppState) {
 
-          if(getSizeImage(cubit) > 7340032) {  // 7MB
+          if(getSizeImage(cubit) > 10485760) {  // 10MB
 
             cubit.clearAllImages();
             Future.delayed(const Duration(milliseconds: 300)).then((value) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     backgroundColor: redColor,
-                    content: const Text('Image is bigger than 7MB',
+                    content: const Text('Image is bigger than 10MB',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -104,7 +104,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               actions: [
                 if(titleController.text.isNotEmpty &&
                     titleController.text.trim().isNotEmpty &&
-                    cubit.imagePaths.length < 6)
+                    cubit.imagePaths.length < 5)
                 FadeIn(
                   duration: const Duration(milliseconds: 300),
                   child: IconButton(
@@ -153,7 +153,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         FadeIn(
                           duration: const Duration(milliseconds: 200),
                           child: Text(
-                            '${cubit.imagePaths.length} / 6',
+                            '${cubit.imagePaths.length} / 5',
                             style: const TextStyle(
                               fontSize: 16.0,
                               letterSpacing: 0.6,

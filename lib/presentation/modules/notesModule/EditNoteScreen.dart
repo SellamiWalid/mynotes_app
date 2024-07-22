@@ -178,7 +178,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                             content: contentController.text,
                             imagePaths: cubit.dataImg,
                         ).then((value) async {
-                             await Future.delayed(const Duration(milliseconds: 500)).then((v) async {
+                             await Future.delayed(const Duration(milliseconds: 300)).then((v) async {
                                Navigator.pop(context);
                                await openFile(value);
                              });
@@ -244,8 +244,8 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                             childAspectRatio: 1 / 0.9,
                             mainAxisSpacing: 30.0,
                           ),
-                          itemBuilder: (context, index) => buildItemImage(cubit.dataImg[index]['id'],
-                              cubit.dataImg[index]['image'], isDarkTheme),
+                          itemBuilder: (context, index) => buildItemImageNote(cubit.dataImg[index]['id'],
+                              globalKey, cubit.dataImg[index]['image'], isDarkTheme, context),
                           itemCount: cubit.dataImg.length,
                         ),
                       16.0.vrSpace,
@@ -306,64 +306,5 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
         );
       }
     }
-
-  Widget buildItemImage(id, String imagePath, isDarkTheme) => GestureDetector(
-    onTap: () async {
-      showFullImageAndSave(id, globalKey, imagePath, isDarkTheme, context);},
-    child: Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.0),
-        border: Border.all(
-          width: 1.0,
-          color: isDarkTheme ? Colors.white : Colors.black,
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20.0),
-        child: Image.file(File(imagePath),
-          height: 250.0,
-          fit: BoxFit.cover,
-          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-            if(frame == null) {
-              return Container(
-                height: 250.0,
-                decoration: BoxDecoration(
-                  color: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
-                  borderRadius: BorderRadius.circular(20.0),
-                  border: Border.all(
-                    width: 1.0,
-                    color: isDarkTheme ? Colors.white : Colors.black,
-                  ),
-                ),
-              );
-            }
-            return FadeIn(
-                duration: const Duration(milliseconds: 300),
-                child: child);
-          },
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              height: 250.0,
-              decoration: BoxDecoration(
-                color: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
-                borderRadius: BorderRadius.circular(20.0),
-                border: Border.all(
-                  width: 1.0,
-                  color: isDarkTheme ? Colors.white : Colors.black,
-                ),
-              ),
-              child: const Icon(
-                Icons.error_outline_rounded,
-                size: 30.0,
-                color: Colors.white,
-              ),
-            );
-          },
-        ),
-      ),
-    ),
-  );
-
-
 
 }

@@ -121,7 +121,7 @@ Widget buildItemNote(note, selectNote, isDarkTheme, context) => FadeInLeft(
       onTap: () {
         if(!AppCubit.get(context).isSelected) {
           AppCubit.get(context).getImageNoteFromDataBase(note['id'], AppCubit.get(context).dataBase);
-          Navigator.of(context).push(createSecondRoute(screen: EditNoteScreen(note: note)));
+          Navigator.of(context).push(createSecondRoute(screen: EditNoteScreen(note: note,)));
         } else {
           if(selectNote[note['id']]) {
             AppCubit.get(context).cancelSelectNote(id: note['id'], isDeleted: false);
@@ -414,6 +414,70 @@ Widget buildItemNoteDeleted(note, selectNoteDeleted, isDarkTheme, context) => Fa
     ),
   ),
 );
+
+Widget buildItemImageNote(id, globalKey, dynamic image, isDarkTheme, context,
+    {bool isOnEditScreen = true}) => GestureDetector(
+  onTap: () async {
+    if(isOnEditScreen) {
+      showFullImageAndSave(id, globalKey, image, isDarkTheme, context);
+    } else {
+      showFullImage(image, isDarkTheme, context);
+    }
+    },
+  child: Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(20.0),
+      border: Border.all(
+        width: 1.0,
+        color: isDarkTheme ? Colors.white : Colors.black,
+      ),
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(20.0),
+      child: Image.file(File(image),
+        height: 250.0,
+        fit: BoxFit.cover,
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if(frame == null) {
+            return Container(
+              height: 250.0,
+              decoration: BoxDecoration(
+                color: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
+                borderRadius: BorderRadius.circular(20.0),
+                border: Border.all(
+                  width: 1.0,
+                  color: isDarkTheme ? Colors.white : Colors.black,
+                ),
+              ),
+            );
+          }
+          return FadeIn(
+              duration: const Duration(milliseconds: 300),
+              child: child);
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            height: 250.0,
+            decoration: BoxDecoration(
+              color: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
+              borderRadius: BorderRadius.circular(20.0),
+              border: Border.all(
+                width: 1.0,
+                color: isDarkTheme ? Colors.white : Colors.black,
+              ),
+            ),
+            child: const Icon(
+              Icons.error_outline_rounded,
+              size: 30.0,
+              color: Colors.white,
+            ),
+          );
+        },
+      ),
+    ),
+  ),
+);
+
 
 
 defaultAppBar({
