@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>MyNotes</string>
+	<string>My Notes</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -48,8 +48,8 @@
 	<key>com.apple.security.network.client</key>
     <true/>
    <key>NSCameraUsageDescription</key>
-   <string>MyNotes uses the camera for image/text chat</string>
+   <string>My Notes uses the camera for image upload</string>
    <key>NSPhotoLibraryUsageDescription</key>
-   <string>MyNotes uses the photo library for image/text chat</string>
+   <string>My Notes uses the photo library for image upload</string>
 </dict>
 </plist>

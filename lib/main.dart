@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Notes Flutter App',
+        title: 'My Notes Flutter App',
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: ThemeMode.system,

@@ -6,6 +6,8 @@ Color lightBgColor = HexColor('f6faff');
 
 Color darkBgColor = HexColor('0b1217');
 
+Color color1 = HexColor('');
+
 Color lightPrimaryColor = HexColor('197ffc'); //197ffc
 
 Color anotherPrimaryColor = HexColor('1c8de8');

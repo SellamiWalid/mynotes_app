@@ -10,38 +10,45 @@ Future<File> generateDoc(List<dynamic> args) async {
   final RootIsolateToken rootIsolateToken = args[3] as RootIsolateToken;
   BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
 
-  final fontData = args[4];
-  var customFont = pw.Font.ttf(fontData);
+  final fontData1 = args[4];
+  final fontData2 = args[5];
+
+  var customFont1 = pw.Font.ttf(fontData1);
+  var customFont2 = pw.Font.ttf(fontData2);
 
   final pw.Document pdf = pw.Document();
-
 
   String title = args[0];
   String content = args[1];
   List<dynamic> imagePaths = args[2];
 
+  bool isArabicTitle = args[6];
+  bool isArabicContent = args[7];
+
   pdf.addPage(pw.MultiPage(
     maxPages: 50,
       build: (context) => [
-            pw.Paragraph(
-                text: title,
+            pw.Text(
+                title,
+                textDirection: isArabicTitle ? pw.TextDirection.rtl : pw.TextDirection.ltr,
                 style: pw.TextStyle(
                     fontSize: 30.0,
                     letterSpacing: 0.6,
                     fontWeight: pw.FontWeight.bold,
-                    font: customFont
+                    font: isArabicTitle ? customFont2 : customFont1,
                 )),
             pw.SizedBox(
               height: 20.0,
             ),
-            pw.Paragraph(
-                text: content,
+            pw.Text(
+                content,
+                textDirection: isArabicContent ? pw.TextDirection.rtl : pw.TextDirection.ltr,
                 style: pw.TextStyle(
                     fontSize: 22.0,
-                    letterSpacing: 0.6,
+                    letterSpacing: 0.8,
                     height: 2.2,
                     fontWeight: pw.FontWeight.bold,
-                    font: customFont
+                    font: isArabicContent ? customFont2 : customFont1,
                 )),
             pw.SizedBox(
               height: 40.0,
@@ -58,7 +65,7 @@ Future<File> generateDoc(List<dynamic> args) async {
             ],
           ]));
 
-  return saveDocument(name: '${args[1]}_Note.pdf', pdf: pdf);
+  return saveDocument(name: '${title}_Note.pdf', pdf: pdf);
 }
 
 

@@ -18,8 +18,8 @@ class AddNoteScreen extends StatefulWidget {
 
 class _AddNoteScreenState extends State<AddNoteScreen> {
 
-  var titleController = TextEditingController();
-  var contentController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController contentController = TextEditingController();
 
   final FocusNode focusNode1 = FocusNode();
   final FocusNode focusNode2 = FocusNode();
@@ -32,16 +32,24 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     super.initState();
     titleController.addListener(() {setState(() {});});
     contentController.addListener(() {setState(() {});});
+
+    Future.delayed(const Duration(milliseconds: 800)).then((value) {
+      if(!mounted) return;
+      FocusScope.of(context).requestFocus(focusNode1);
+    });
+
   }
 
   @override
   void dispose() {
+    super.dispose();
     titleController.dispose();
     titleController.removeListener(() {setState(() {});});
     contentController.dispose();
     contentController.removeListener(() {setState(() {});});
     scrollController.dispose();
-    super.dispose();
+    focusNode1.dispose();
+    focusNode2.dispose();
   }
 
 
@@ -58,123 +66,156 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         var cubit = AppCubit.get(context);
 
         if(state is SuccessGetImageAppState) {
-
-          if(getSizeImage(cubit) > 10485760) {  // 10MB
-
-            cubit.clearAllImages();
-            Future.delayed(const Duration(milliseconds: 300)).then((value) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: redColor,
-                    content: const Text('Image is bigger than 10MB',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    duration: const Duration(seconds: 1),
-                  ));
-            });
-
-          } else {
-
-            WidgetsBinding.instance.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
               Future.delayed(const Duration(milliseconds: 300)).then((value) {
                 scrollToBottom(scrollController);
               });
             });
           }
+
+        if(state is ErrorGetImageAppState) {
+
+          if(state.error == 'error-size') {
+
+            cubit.clearAllImages();
+            Future.delayed(const Duration(milliseconds: 300)).then((value) {
+              if(context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: redColor,
+                      content: const Text('Image is bigger than 10MB',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      duration: const Duration(seconds: 1),
+                    ));
+              }
+            });
+
+          } else {
+
+            cubit.clearAllImages();
+            Future.delayed(const Duration(milliseconds: 300)).then((value) {
+              if(context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: redColor,
+                      content: Text(state.error.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      duration: const Duration(seconds: 2),
+                    ));
+              }
+            });
+          }
+
         }
+
       },
       builder: (context, state) {
 
         var cubit = AppCubit.get(context);
 
         return PopScope(
-          onPopInvoked: (v) async {
+          onPopInvokedWithResult: (v, _) async {
             addNote(cubit, context);
           },
-          child: Scaffold(
-            appBar: defaultAppBar(
-              onPress: () {
-                addNote(cubit, context);
+          child: GestureDetector(
+            onVerticalDragEnd: (details) {
+              if(details.primaryVelocity! > 0) {
+                focusNode1.unfocus();
+                focusNode2.unfocus();
                 Navigator.pop(context);
-              },
-              title: 'Add Note',
-              actions: [
-                if(titleController.text.isNotEmpty &&
-                    titleController.text.trim().isNotEmpty &&
-                    cubit.imagePaths.length < 5)
-                FadeIn(
-                  duration: const Duration(milliseconds: 300),
-                  child: IconButton(
-                      onPressed: () {
-                        focusNode1.unfocus();
-                        focusNode2.unfocus();
-                        showOptions(isDarkTheme, context);
-                      },
-                      icon: Icon(
-                        EvaIcons.imageOutline,
-                        color: isDarkTheme ? anotherPrimaryColor : lightPrimaryColor,
-                        size: 30.0,
-                      ),
-                    enableFeedback: true,
-                    tooltip: 'Add Image',
+              }
+            },
+            child: Scaffold(
+              appBar: defaultAppBar(
+                onPress: () {
+                  focusNode1.unfocus();
+                  focusNode2.unfocus();
+                  Navigator.pop(context);
+                },
+                title: 'Add Note',
+                actions: [
+                  if(titleController.text.isNotEmpty &&
+                      titleController.text.trim().isNotEmpty &&
+                      cubit.imagePaths.length < 5)
+                  FadeIn(
+                    duration: const Duration(milliseconds: 300),
+                    child: IconButton(
+                        onPressed: () {
+                          focusNode1.unfocus();
+                          focusNode2.unfocus();
+                          showOptions(isDarkTheme, context);
+                        },
+                        icon: Icon(
+                          EvaIcons.imageOutline,
+                          color: isDarkTheme ? anotherPrimaryColor : lightPrimaryColor,
+                          size: 30.0,
+                        ),
+                      enableFeedback: true,
+                      tooltip: 'Add Image',
+                    ),
                   ),
-                ),
-                8.0.hrSpace,
-              ]
-            ),
-            body: SingleChildScrollView(
-              controller: scrollController,
-              clipBehavior: Clip.antiAlias,
-              physics: const BouncingScrollPhysics(),
-              child: FadeInUp(
-                duration: const Duration(milliseconds: 400),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      defaultTextFormField(
-                          controller: titleController,
-                          focusNode: focusNode1,
-                          hintText: 'Title',
-                          onPress: () {FocusScope.of(context).requestFocus(focusNode2);},
-                      ),
-                      20.0.vrSpace,
-                      defaultTextFormField(
-                        controller: contentController,
-                        focusNode: focusNode2,
-                        hintText: 'Content',
-                        isTitle: false,
-                      ),
-                     40.0.vrSpace,
-                      if(cubit.imagePaths.isNotEmpty) ...[
-                        FadeIn(
-                          duration: const Duration(milliseconds: 200),
-                          child: Text(
-                            '${cubit.imagePaths.length} / 5',
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                              letterSpacing: 0.6,
+                  8.0.hrSpace,
+                ]
+              ),
+              body: SingleChildScrollView(
+                controller: scrollController,
+                clipBehavior: Clip.antiAlias,
+                physics: const BouncingScrollPhysics(),
+                child: FadeInUp(
+                  duration: const Duration(milliseconds: 500),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        defaultTextFormField(
+                            controller: titleController,
+                            focusNode: focusNode1,
+                            hintText: 'Title',
+                            onPress: () {FocusScope.of(context).requestFocus(focusNode2);},
+                        ),
+                        20.0.vrSpace,
+                        defaultTextFormField(
+                          controller: contentController,
+                          focusNode: focusNode2,
+                          hintText: 'Content',
+                          isTitle: false,
+                        ),
+                       40.0.vrSpace,
+                        if(cubit.imagePaths.isNotEmpty) ...[
+                          FadeIn(
+                            duration: const Duration(milliseconds: 200),
+                            child: Text(
+                              '${cubit.imagePaths.length} / 5',
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                                letterSpacing: 0.6,
+                              ),
                             ),
                           ),
-                        ),
-                        12.0.vrSpace,
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          clipBehavior: Clip.antiAlias,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 1,
-                            childAspectRatio: 1 / 0.85,
+                          12.0.vrSpace,
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            clipBehavior: Clip.antiAlias,
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 1,
+                              childAspectRatio: 1 / 0.85,
+                            ),
+                            itemBuilder: (context, index) => buildItemImagePicked(
+                                cubit, cubit.imagePaths[index], index, isDarkTheme, context),
+                            itemCount: cubit.imagePaths.length,
                           ),
-                          itemBuilder: (context, index) => buildItemImagePicked(
-                              cubit, cubit.imagePaths[index], index, isDarkTheme, context),
-                          itemCount: cubit.imagePaths.length,
-                        ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),

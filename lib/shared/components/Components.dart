@@ -58,8 +58,7 @@ Route createRoute({required screen}) {
         const end = Offset.zero;
         const curve = Curves.easeIn;
 
-        var tween =
-        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
         return SlideTransition(
           position: animation.drive(tween),
@@ -110,7 +109,7 @@ Route createThirdRoute({required screen}) {
 
 
 
-Widget buildItemNote(note, selectNote, isDarkTheme, context) => FadeInLeft(
+Widget buildItemNote(note, selectNote, isDarkTheme, context) => FadeIn(
   duration: const Duration(milliseconds: 500),
   child: Dismissible(
     key: UniqueKey(),
@@ -137,10 +136,10 @@ Widget buildItemNote(note, selectNote, isDarkTheme, context) => FadeInLeft(
         }
       },
       child: Card(
-        clipBehavior: Clip.antiAliasWithSaveLayer,
+        clipBehavior: Clip.antiAlias,
         elevation: isDarkTheme ? 8.0 : 5.0,
-        surfaceTintColor: isDarkTheme ? Theme.of(context).colorScheme.primary
-            : lightBgColor,
+        surfaceTintColor: isDarkTheme ?
+        Theme.of(context).colorScheme.primary : lightBgColor,
         margin: const EdgeInsets.symmetric(
           horizontal: 14.0,
           vertical: 12.0,
@@ -415,8 +414,7 @@ Widget buildItemNoteDeleted(note, selectNoteDeleted, isDarkTheme, context) => Fa
   ),
 );
 
-Widget buildItemImageNote(id, globalKey, dynamic image, isDarkTheme, context,
-    {bool isOnEditScreen = true}) => GestureDetector(
+Widget buildItemImageNote(id, globalKey, dynamic image, isDarkTheme, context, {bool isOnEditScreen = true}) => GestureDetector(
   onTap: () async {
     if(isOnEditScreen) {
       showFullImageAndSave(id, globalKey, image, isDarkTheme, context);
@@ -426,7 +424,7 @@ Widget buildItemImageNote(id, globalKey, dynamic image, isDarkTheme, context,
     },
   child: Container(
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(20.0),
+      borderRadius: BorderRadius.circular(22.0),
       border: Border.all(
         width: 1.0,
         color: isDarkTheme ? Colors.white : Colors.black,
@@ -456,20 +454,14 @@ Widget buildItemImageNote(id, globalKey, dynamic image, isDarkTheme, context,
               child: child);
         },
         errorBuilder: (context, error, stackTrace) {
-          return Container(
+          return const SizedBox(
             height: 250.0,
-            decoration: BoxDecoration(
-              color: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
-              borderRadius: BorderRadius.circular(20.0),
-              border: Border.all(
-                width: 1.0,
-                color: isDarkTheme ? Colors.white : Colors.black,
+            child: Center(
+              child: Icon(
+                Icons.error_outline_rounded,
+                size: 30.0,
+                color: Colors.white,
               ),
-            ),
-            child: const Icon(
-              Icons.error_outline_rounded,
-              size: 30.0,
-              color: Colors.white,
             ),
           );
         },
@@ -514,17 +506,19 @@ Widget defaultTextFormField({
   required FocusNode focusNode,
   required String hintText,
   Function? onPress,
+  Function(String)? onChanged,
   bool isTitle = true,
 
 }) => TextFormField(
+      clipBehavior: Clip.antiAlias,
       controller: controller,
       focusNode: focusNode,
       textCapitalization: TextCapitalization.sentences,
       maxLines: null,
-      maxLength: (isTitle) ? 40 : null,
+      maxLength: isTitle ? 40 : null,
       keyboardType: (isTitle) ? TextInputType.text : TextInputType.multiline,
       style: TextStyle(
-        fontWeight: FontWeight.bold,
+        fontWeight: isTitle ? FontWeight.bold : FontWeight.w100,
         letterSpacing: 0.6,
         height: (!isTitle) ? 1.8 : 1.0,
       ),
@@ -536,6 +530,9 @@ Widget defaultTextFormField({
         ),
         border: (isTitle == false) ? InputBorder.none : null,
       ),
+      onChanged: (v) {
+        onChanged!(v);
+      },
       onEditingComplete: () {
         onPress!();
       },
@@ -562,31 +559,39 @@ dynamic showLoading(context, isDarkTheme) => showDialog(
       });
 
 
-void showOptions(isDarkTheme, context) {
+dynamic showOptions(isDarkTheme, context) {
   showModalBottomSheet(
       context: context,
+      clipBehavior: Clip.antiAlias,
       builder: (context) {
         return SafeArea(
-          child: Material(
-            color: isDarkTheme ?
-               darkBgColor : lightBgColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8.0,
+            ),
             child: Wrap(
               children: <Widget>[
                 ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
                   leading: const Icon(
                       Icons.camera_alt_rounded),
                   title: const Text(
-                      'Take a new photo'),
+                      'Open Camera'),
                   onTap: () async {
                     AppCubit.get(context).getImage(ImageSource.camera);
                     Navigator.pop(context);
                   },
                 ),
                 ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
                   leading: const Icon(
                       Icons.photo_library_rounded),
                   title: const Text(
-                      'Choose from gallery'),
+                      'Open Gallery'),
                   onTap: () async {
                     AppCubit.get(context).getImage(ImageSource.gallery);
                     Navigator.pop(context);
@@ -645,21 +650,15 @@ Widget buildItemImagePicked(AppCubit cubit, File imagePicked, index, isDarkTheme
                     child: child);
               },
               errorBuilder: (context, error, stackTrace) {
-                return Container(
+                return SizedBox(
                   width: MediaQuery.of(context).size.width / 1.2,
                   height: 250.0,
-                  decoration: BoxDecoration(
-                    color: isDarkTheme ? darkPrimaryColor : lightPrimaryColor,
-                    borderRadius: BorderRadius.circular(20.0),
-                    border: Border.all(
-                      width: 1.0,
-                      color: isDarkTheme ? Colors.white : Colors.black,
+                  child: const Center(
+                    child: Icon(
+                      Icons.error_outline_rounded,
+                      size: 34.0,
+                      color: Colors.white,
                     ),
-                  ),
-                  child: const Icon(
-                    Icons.error_outline_rounded,
-                    size: 30.0,
-                    color: Colors.white,
                   ),
                 );
               },
@@ -702,12 +701,6 @@ void scrollToBottom(scrollController) {
         duration: const Duration(milliseconds: 800),
         curve: Curves.easeInOut);
   }
-}
-
-
-int getSizeImage(AppCubit cubit) {
-  int sizeImage = File(cubit.imagePaths[cubit.imagePaths.length - 1].path).lengthSync();
-  return sizeImage;
 }
 
 

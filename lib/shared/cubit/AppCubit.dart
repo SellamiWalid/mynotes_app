@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:notes/shared/components/Constants.dart';
 import 'package:notes/shared/cubit/AppStates.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -81,13 +82,16 @@ class AppCubit extends Cubit<AppStates> {
        [title, content, date, dateTime, 'New'])
           .then((value) {
 
-        getFromDataBase(dataBase, context);
+       if(context.mounted) {
+         getFromDataBase(dataBase, context);
 
-        if(imagePaths.isNotEmpty) {
-          for(var element in imagePaths) {
-            addImageNoteInDataBase(id: value, imagePath: element.path);
-          }
-        }
+         if(imagePaths.isNotEmpty) {
+           for(var element in imagePaths) {
+             addImageNoteInDataBase(id: value, imagePath: element.path);
+           }
+         }
+
+       }
 
       }).catchError((error) {
 
@@ -106,24 +110,37 @@ class AppCubit extends Cubit<AppStates> {
 
   Future<void> getImage(ImageSource source) async {
 
-    final pickedFile = await picker.pickImage(source: source);
+    try {
 
-    if(pickedFile != null) {
+      final pickedFile = await picker.pickImage(source: source);
 
-      final appDir = await getApplicationDocumentsDirectory();
-      final newPath = '${appDir.path}/${pickedFile.name}';
-      final imageFile = await File(pickedFile.path).copy(newPath);
-      imagePaths.add(imageFile);
+      if(pickedFile != null) {
 
-      emit(SuccessGetImageAppState());
+        if(File(pickedFile.path).lengthSync() <= 10485760) {
 
-    } else {
+          final appDir = await getApplicationDocumentsDirectory();
+          final newPath = '${appDir.path}/${pickedFile.name}';
+          final imageFile = await File(pickedFile.path).copy(newPath);
+          imagePaths.add(imageFile);
 
-      emit(ErrorGetImageAppState());
+          emit(SuccessGetImageAppState());
+
+        } else {
+
+          emit(ErrorGetImageAppState('error-size'));
+
+        }
+
+      }
+
+    } catch(e) {
+
+      emit(ErrorGetImageAppState(e.toString()));
 
     }
 
   }
+
 
   void clearImage(index) {
     imagePaths.removeAt(index);
@@ -167,10 +184,6 @@ class AppCubit extends Cubit<AppStates> {
   List<dynamic> dataImg = [];
 
   void getImageNoteFromDataBase(id, dataBase) async {
-
-    if (kDebugMode) {
-      print(id);
-    }
 
     await dataBase?.rawQuery('SELECT * FROM Images WHERE id_note = ?',
         [id]).then((value) {
@@ -556,5 +569,37 @@ class AppCubit extends Cubit<AppStates> {
   }
 
 
+  bool isArabicTitle = false;
+  bool isArabicContent = false;
+
+  void detectLangText(bool isTitle, String text) {
+
+    if(isTitle) {
+      if(englishRegex.hasMatch(text)) {
+        isArabicTitle = false;
+      } else if(arabicRegex.hasMatch(text)) {
+        isArabicTitle = true;
+      }
+
+    } else {
+
+      if(englishRegex.hasMatch(text)) {
+        isArabicContent = false;
+      } else if(arabicRegex.hasMatch(text)) {
+        isArabicContent = true;
+      }
+
+    }
+
+    emit(SuccessDetectLangTextAppState());
+  }
+
+
+  void clearDetectLang() {
+    isArabicTitle = false;
+    isArabicContent = false;
+
+    emit(SuccessClearAppState());
+  }
 
 }

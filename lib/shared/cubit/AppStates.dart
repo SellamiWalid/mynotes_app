@@ -137,12 +137,19 @@ class SuccessSearchNoteAppState extends AppStates {}
 
 class SuccessClearAppState extends AppStates {}
 
+class SuccessDetectLangTextAppState extends AppStates {}
+
 
 // Image
 
 class SuccessGetImageAppState extends AppStates {}
 
-class ErrorGetImageAppState extends AppStates {}
+class ErrorGetImageAppState extends AppStates {
+
+  dynamic error;
+  ErrorGetImageAppState(this.error);
+
+}
 
 class SuccessAddImageNoteIntoDataBaseAppState extends AppStates {}
 

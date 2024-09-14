@@ -132,7 +132,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
         return PopScope(
           canPop: cubit.isSelected ? false : true,
-          onPopInvoked: (v) {
+          onPopInvokedWithResult: (v, _) {
             if(cubit.isSelected) {
               cubit.cancelAll();
             }
@@ -140,9 +140,9 @@ class _NotesScreenState extends State<NotesScreen> {
           child: Scaffold(
             appBar: AppBar(
               title: FadeIn(
-                duration: const Duration(milliseconds: 400),
+                duration: const Duration(milliseconds: 300),
                 child: const Text(
-                  'Notes',
+                  'My-Notes',
                   style: TextStyle(
                     fontFamily: 'Josefin',
                     letterSpacing: 0.6,
@@ -166,7 +166,7 @@ class _NotesScreenState extends State<NotesScreen> {
                   ),
                 ],
                 if(!cubit.isSelected && cubit.notes.length > 4) ... [
-                  FadeInRight(
+                  FadeIn(
                     duration: const Duration(milliseconds: 300),
                     child: IconButton(
                       onPressed: () {
@@ -221,7 +221,7 @@ class _NotesScreenState extends State<NotesScreen> {
               ),
               fallback: (context) => Center(
                 child: FadeIn(
-                  duration: const Duration(milliseconds: 400),
+                  duration: const Duration(milliseconds: 500),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -251,22 +251,25 @@ class _NotesScreenState extends State<NotesScreen> {
             ),
             floatingActionButton: (!cubit.isSelected) ? Visibility(
               visible: isVisible,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SizedBox(
-                  width: 60.0,
-                  height: 60.0,
-                  child: FloatingActionButton(
-                    enableFeedback: true,
-                    tooltip: 'New Note',
-                    elevation: 8.0,
-                    onPressed: () {
-                      Navigator.of(context).push(createRoute(screen: const AddNoteScreen()));
-                    },
-                    child: const Icon(
-                      EvaIcons.edit2Outline,
-                      color: Colors.white,
-                      size: 27.0,
+              child: ZoomIn(
+                duration: const Duration(milliseconds: 500),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: SizedBox(
+                    width: 60.0,
+                    height: 60.0,
+                    child: FloatingActionButton(
+                      enableFeedback: true,
+                      tooltip: 'New Note',
+                      elevation: 8.0,
+                      onPressed: () {
+                        Navigator.of(context).push(createRoute(screen: const AddNoteScreen()));
+                      },
+                      child: const Icon(
+                        EvaIcons.edit2Outline,
+                        color: Colors.white,
+                        size: 27.0,
+                      ),
                     ),
                   ),
                 ),

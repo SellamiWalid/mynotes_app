@@ -32,11 +32,18 @@ ThemeData lightTheme = ThemeData(
         statusBarBrightness: Brightness.dark,
       ),
     ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: lightBgColor,
+      showDragHandle: true,
+    ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: lightBgColor,
+    ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: lightPrimaryColor,
     ));
 
-// 191C1E
+
 
 ThemeData darkTheme = ThemeData(
   useMaterial3: true,
@@ -67,6 +74,13 @@ ThemeData darkTheme = ThemeData(
       systemNavigationBarColor: darkBgColor,
       statusBarBrightness: Brightness.light,
     ),
+  ),
+  bottomSheetTheme: BottomSheetThemeData(
+    backgroundColor: darkBgColor,
+    showDragHandle: true,
+  ),
+  popupMenuTheme: PopupMenuThemeData(
+    color: Colors.blueGrey.shade900,
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: darkPrimaryColor,

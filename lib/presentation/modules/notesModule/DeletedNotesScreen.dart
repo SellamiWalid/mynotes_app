@@ -117,7 +117,7 @@ class _DeletedNotesScreenState extends State<DeletedNotesScreen> {
 
         return PopScope(
           canPop: (cubit.isSelected) ? false : true,
-          onPopInvoked: (v) {
+          onPopInvokedWithResult: (v, _) {
             if(cubit.isSelected) {
               cubit.cancelAll(isDeleted: true);
             }
@@ -175,7 +175,7 @@ class _DeletedNotesScreenState extends State<DeletedNotesScreen> {
               ),
               fallback: (context) => Center(
                 child: FadeInLeft(
-                  duration: const Duration(milliseconds: 400),
+                  duration: const Duration(milliseconds: 500),
                   child: const Text(
                     'No notes in recycle bin',
                     style: TextStyle(
